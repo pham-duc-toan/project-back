@@ -1,10 +1,10 @@
 const express = require("express");
 require("dotenv").config();
 
-const database = require("./config/database");
-const systemConfig = require("./config/system");
 
-database.connect();
+const systemConfig = require("./config/system");
+// Liên kết database trước
+
 const routeAdmin = require("./routes/admin/index.route");
 const route = require("./routes/clients/index.route");
 
