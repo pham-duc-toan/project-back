@@ -5,7 +5,7 @@ const Product = require("../../models/product.model");
 //     let find = req.query;
 //     find.deleted= false;
     
-    
+//     // danh dau class active
 //     let filterStatus =[
 //       {
 //         name: "Tất cả",
@@ -28,12 +28,9 @@ const Product = require("../../models/product.model");
 //       const index = filterStatus.findIndex((item) => {
 //         return item.status == req.query.status;
 //       });
-//       if(index==-1) index= 0;
 //       filterStatus[index].class = "active";
     
-//     if(req.query.status) {
-//       find.status = req.query.status;
-//     }
+    
 //     console.log(find);
 //     const products = await Product.find(find);
 //     res.render("admin/page/products/index", {
