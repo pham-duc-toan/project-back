@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 // //test
-// mongoose.connect(process.env.mongourl); 
+mongoose.connect(process.env.mongourl); 
 //end test
 const database = require("../config/database");
 database.connect();
