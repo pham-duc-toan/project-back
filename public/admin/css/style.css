@@ -56,3 +56,12 @@
   margin: 0 15px;
 }
 /* end pagination */
+/* status */
+button {
+  border: none;
+}
+[data-status$="inactive"]{
+  background-color: red;
+}
+/* end status */
+
