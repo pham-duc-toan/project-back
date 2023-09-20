@@ -11,7 +11,6 @@ let objectSearch = searchHelper(req.query);
     deleted: false
   
   };
-// console.log(req.query.status);
   if(req.query.status) {
     find.status = req.query.status;
   }
@@ -40,7 +39,6 @@ let objectSearch = searchHelper(req.query);
     pagination: objectPagination
   });
 }
-// [GET] /admin/products
 // [PATCH] /admin/products/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
   const status = req.params.status;
@@ -51,8 +49,17 @@ module.exports.changeStatus = async (req, res) => {
   res.redirect("back");
 }
 // [PATCH] /admin/products/change-multi
-module.exports.changeMulti = async (req, res) => {
-  console.log(req.body);
 
-  res.send("OK");
+module.exports.changeMulti = async (req, res) => {
+  const type = req.body.type;
+  const ids = req.body.ids.split(", ");
+  switch (type) {
+    case "active":
+    case "inactive":
+      await Product.updateMany({ _id: {$in: ids} }, { status: type });
+      break;
+    default:
+      break;
+  }
+  res.redirect("back");
 }
