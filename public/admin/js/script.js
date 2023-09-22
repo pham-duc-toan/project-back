@@ -1,4 +1,10 @@
-// Button Status
+//*tóm tắt: 
+//  -những hàm lọc thì sẽ gửi yêu cầu qua url, để back lấy data từ url qua req.query, url sẽ thêm dấu ? (ko phải thêm route con) , lọc qua hàm find
+//  -những hàm thay đổi thì sẽ gửi yêu cầu qua cái form, để back sẽ lấy từ data từ form quareq.body hoặc url qua req.params, url thêm / (phải thêm route con), thay đổi data qua hàm updateMany hoặc updateOne, sau đó res.redirect("back") để render lại giao diện với data mới
+
+
+
+// Button Lọc Status
 const buttonsStatus = document.querySelectorAll("[button-status]");
 if(buttonsStatus.length > 0) {
   let url = new URL(window.location.href);
@@ -17,9 +23,9 @@ if(buttonsStatus.length > 0) {
     });
   });
 }
-// End Button Status
+// End Button Lọc Status
 
-// Form Search
+// Lọc Theo Form Search
 const formSearch = document.querySelector("#form-search");
 if(formSearch) {
   let url = new URL(window.location.href);
@@ -37,7 +43,7 @@ if(formSearch) {
     window.location.href = url.href;
   });
 }
-// End Form Search
+// End Lọc Theo Form Search
 // Pagination
 const buttonsPagination = document.querySelectorAll("[button-pagination]");
 if(buttonsPagination.length > 0) {
@@ -124,15 +130,32 @@ if(formChangeMulti) {
     const inputsChecked = checkboxMulti.querySelectorAll(
       "input[name='id']:checked"
     );
+    const typeChange = e.target.elements.type.value;
+    
+    if(typeChange == "delete-all") {
+      const isConfirm = confirm("Bạn có chắc muốn xóa những bản ghi này?");
+
+      if(!isConfirm) {
+        return;
+      }
+    }
 
     if(inputsChecked.length > 0) {
       let ids = [];
       const inputIds = formChangeMulti.querySelector("input[name='ids']");
 
       inputsChecked.forEach(input => {
-        ids.push(input.value);
-      });
+        const id = input.value;
 
+        if(typeChange == "change-position") {
+          const position = input.closest("tr").querySelector("input[name='position']").value;
+
+          ids.push(`${id}-${position}`);
+        } else {
+          ids.push(id);
+        }
+      });
+      
       inputIds.value = ids.join(", ");
 
       formChangeMulti.submit();
@@ -165,3 +188,18 @@ if (buttonsDelete.length > 0) {
   });
 }
 // End delete
+// Show Alert
+const showAlert = document.querySelector("[show-alert]");
+if(showAlert) {
+  const time = parseInt(showAlert.getAttribute("data-time")) || 3000;
+  const closeAlert = showAlert.querySelector("[close-alert]");
+
+  setTimeout(() => {
+    showAlert.classList.add("alert-hidden");
+  }, time);
+
+  closeAlert.addEventListener("click", () => {
+    showAlert.classList.add("alert-hidden");
+  });
+}
+// End Show Alert
