@@ -12,9 +12,9 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 // const port = 3000;
 
-app.set("views", "./views");
+app.set("views", `${__dirname}/views`);
 app.set("view engine", "pug");
-app.use(express.static("public"));
+app.use(express.static(`${__dirname}/public`));
 app.use(methodOverride("_method"));
 app.use(bodyParser.urlencoded({ extended: false }));
 

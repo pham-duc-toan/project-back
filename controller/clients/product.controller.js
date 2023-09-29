@@ -16,3 +16,24 @@ module.exports.index = async (req, res) => {
       products: productsNew
     });
   }
+
+
+// [GET] /products/detail/:slug
+module.exports.detail = async (req, res) => {
+  try {
+    const slug = req.params.slug;
+
+    const product = await Product.findOne({
+      slug: slug,
+      deleted: false,
+      status: "active"
+    });
+
+    res.render("client/pages/products/detail", {
+      pageTitle: "Chi tiết sản phẩm",
+      product: product
+    });
+  } catch (error) {
+    res.redirect("/");
+  }
+}
