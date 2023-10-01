@@ -1,6 +1,6 @@
 //*tóm tắt: 
-//  -những hàm lọc thì sẽ gửi yêu cầu qua url, để back lấy data từ url qua req.query, url sẽ thêm dấu ? (ko phải thêm route con) , lọc qua hàm find
-//  -những hàm thay đổi thì sẽ gửi yêu cầu qua cái form, để back sẽ lấy từ data từ form quareq.body hoặc url qua req.params, url thêm / (phải thêm route con), thay đổi data qua hàm updateMany hoặc updateOne, sau đó res.redirect("back") để render lại giao diện với data mới
+//  -những hàm mục đích sắp xếp data (ko đổi data) thì sẽ gửi yêu cầu qua url, để back lấy data từ url qua req.query, url sẽ thêm dấu ? (ko phải thêm route con) , lọc qua hàm find
+//  -những hàm thay đổi data thì sẽ gửi yêu cầu qua cái form, để back sẽ lấy từ data từ form quareq.body hoặc url qua req.params, url thêm / (phải thêm route con), thay đổi data qua hàm updateMany hoặc updateOne, sau đó res.redirect("back") để render lại giao diện với data mới
 
 
 
@@ -8,7 +8,7 @@
 const buttonsStatus = document.querySelectorAll("[button-status]");
 if(buttonsStatus.length > 0) {
   let url = new URL(window.location.href);
-
+  
   buttonsStatus.forEach(button => {
     button.addEventListener("click", () => {
       const status = button.getAttribute("button-status");
