@@ -22,14 +22,19 @@ module.exports.index = async (req, res) => {
 module.exports.detail = async (req, res) => {
   try {
     const slug = req.params.slug;
-
-    const product = await Product.findOne({
-      slug: slug,
-      deleted: false,
-      status: "active"
-    });
-
-    res.render("client/pages/products/detail", {
+    var product;
+    if(slug == "undefined"){
+      res.redirect("back");
+  
+    }
+    else {
+        product = await Product.findOne({
+        deleted: false,
+        slug: slug,
+        status: "active"
+      });
+    }
+    res.render("clients/page/products/detail", {
       pageTitle: "Chi tiết sản phẩm",
       product: product
     });
