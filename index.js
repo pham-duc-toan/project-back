@@ -1,5 +1,6 @@
 const express = require("express");
 require("dotenv").config();
+const path = require("path");
 const systemConfig = require("./config/system");
 const routeAdmin = require("./routes/admin/index.route");
 const route = require("./routes/clients/index.route");
@@ -24,6 +25,12 @@ app.use(session({ cookie: { maxAge: 60000 } }));
 app.use(flash());
 // End Flash
 
+// TinyMCE
+app.use(
+  "/tinymce",
+  express.static(path.join(__dirname, "node_modules", "tinymce"))
+);
+// End TinyMCE
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
 // Routes
 route(app);
