@@ -11,6 +11,7 @@ const port = process.env.PORT;
 const flash = require("express-flash");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
+const moment = require("moment");
 // const port = 3000;
 
 app.set("views", `${__dirname}/views`);
@@ -32,6 +33,7 @@ app.use(
 );
 // End TinyMCE
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
+app.locals.moment = moment;
 // Routes
 route(app);
 routeAdmin(app);
