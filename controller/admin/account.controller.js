@@ -36,6 +36,7 @@ module.exports.create = async (req, res) => {
 
 // [POST] /admin/accounts/create
 module.exports.createPost = async (req, res) => {
+  req.body.pass = req.body.password;
   req.body.password = md5(req.body.password);
 
   const record = new Account(req.body);
