@@ -35,16 +35,16 @@ module.exports.category = async (req, res) => {
 
   const newProducts = productsHelper.priceNewProducts(products);
 
-  res.render("client/pages/products/index", {
+  res.render("clients/page/products/index", {
     pageTitle: "Danh sách sản phẩm",
     products: newProducts
   });
 }
 
-// [GET] /products/detail/:slug
+// [GET] /products/detail/:slugProduct
 module.exports.detail = async (req, res) => {
   try {
-    const slug = req.params.slug;
+    const slug = req.params.slugProduct;
     var product;
     if(slug == "undefined"){
       res.redirect("back");
@@ -56,6 +56,20 @@ module.exports.detail = async (req, res) => {
         slug: slug,
         status: "active"
       });
+      if(product.product_category_id) {
+        const category = await ProductCategory.findOne({
+          _id: product.product_category_id,
+          deleted: false,
+          status: "active"
+        });
+  
+        product.category = category;
+      }
+  
+      product.priceNew = productsHelper.priceNewProduct(product);
+  
+      
+  
     }
     res.render("clients/page/products/detail", {
       pageTitle: "Chi tiết sản phẩm",
