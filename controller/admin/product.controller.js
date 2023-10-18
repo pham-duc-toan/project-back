@@ -59,7 +59,7 @@ let objectSearch = searchHelper(req.query);
         _id: userUpdatedId.account_id
       });
 
-      console.log(userUpdated)
+      
 
       if(userUpdated) {
         userUpdatedId.accountFullName = userUpdated.fullName;
