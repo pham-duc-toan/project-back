@@ -46,12 +46,24 @@ let objectSearch = searchHelper(req.query);
       .skip(objectPagination.skip);
   
   for (const product of products) {
-    const user = await Account.findOne({
+    const userCreated = await Account.findOne({
       _id: product.createdBy.account_id
     });
 
-    if(user) {
-      product.createdBy.accountFullName = user.fullName;
+    if(userCreated) {
+      product.createdBy.accountFullName = userCreated.fullName;
+    }
+    const userUpdatedId = product.updatedBy.slice(-1)[0];
+    if(userUpdatedId) {
+      const userUpdated = await Account.findOne({
+        _id: userUpdatedId.account_id
+      });
+
+      console.log(userUpdated)
+
+      if(userUpdated) {
+        userUpdatedId.accountFullName = userUpdated.fullName;
+      }
     }
   }
   
@@ -84,7 +96,15 @@ module.exports.changeStatus = async (req, res) => {
   const status = req.params.status;
   const id = req.params.id;
 
-  await Product.updateOne({ _id: id }, { status: status });
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date(),
+  };
+
+  await Product.updateOne({ _id: id }, {
+    status: status,
+    $push: { updatedBy: updatedBy }
+  });
   req.flash("success", "Cập nhật thay đổi thành công!");
   res.redirect("back");
 }
@@ -93,10 +113,17 @@ module.exports.changeStatus = async (req, res) => {
 module.exports.changeMulti = async (req, res) => {
   const type = req.body.type;
   const ids = req.body.ids.split(", ");
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date(),
+  };
   switch (type) {
     case "active":
     case "inactive":
-      await Product.updateMany({ _id: {$in: ids} }, { status: type });
+      await Product.updateMany({ _id: { $in: ids } }, {
+        status: type,
+        $push: { updatedBy: updatedBy }
+      });
       req.flash("success", "Cập nhật thay đổi thành công!");
       break;
     case "delete-all":
@@ -112,7 +139,10 @@ module.exports.changeMulti = async (req, res) => {
     case "change-position":
       for (const item of ids) {
         const [id, position] = item.split("-");
-        await Product.updateOne({ _id: id }, { position: position });
+        await Product.updateOne({ _id: id }, {
+          position: position,
+          $push: { updatedBy: updatedBy }
+        });
         req.flash("success", "Cập nhật thay đổi thành công!");
       }
       break;
@@ -216,7 +246,15 @@ module.exports.editPatch = async (req, res) => {
 
   
 
-  await Product.updateOne({ _id: id }, req.body);
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date(),
+  };
+
+  await Product.updateOne({ _id: id }, {
+    ...req.body,
+    $push: { updatedBy: updatedBy }
+  });
 
   req.flash("success", "Cập nhật sản phẩm thành công!");
 
