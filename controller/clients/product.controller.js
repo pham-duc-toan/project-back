@@ -7,7 +7,7 @@ module.exports.index = async (req, res) => {
   const products = await Product.find({
     status: "active",
     deleted: false
-  }).sort({ position: "desc" });; 
+  }).sort({ position: "desc" });
   const newProducts = productsHelper.priceNewProducts(products);
     res.render("clients/page/products/index", {
       pageTitle: "Danh sách sản phẩm",
