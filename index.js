@@ -37,6 +37,11 @@ app.locals.moment = moment;
 // Routes
 route(app);
 routeAdmin(app);
+app.get("*", (req, res) => {
+  res.render("clients/page/errors/404", {
+    pageTitle: "404 Not Found",
+  });
+});
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);
 });
