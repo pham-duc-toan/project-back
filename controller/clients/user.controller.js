@@ -2,6 +2,7 @@ const md5 = require("md5");
 
 const User = require("../../models/user.model");
 const ForgotPassword = require("../../models/forgot-password.model");
+const Cart = require("../../models/cart.model");
 
 const generateHelper = require("../../helpers/generate");
 const sendMailHelper = require("../../helpers/sendMail");
@@ -16,10 +17,10 @@ module.exports.register = async (req, res) => {
 module.exports.registerPost = async (req, res) => {
   const existEmail = await User.findOne({
     email: req.body.email,
-    deleted: false
+    deleted: false,
   });
 
-  if(existEmail) {
+  if (existEmail) {
     req.flash("error", `Email đã tồn tại!`);
     res.redirect("back");
     return;
@@ -36,48 +37,58 @@ module.exports.registerPost = async (req, res) => {
 };
 // [GET] /user/login
 module.exports.login = async (req, res) => {
-    res.render("clients/page/user/login", {
-      pageTitle: "Đăng nhập tài khoản",
-    });
-  };
-  
-  // [POST] /user/login
-  module.exports.loginPost = async (req, res) => {
-    const email = req.body.email;
-    const password = req.body.password;
-  
-    const user = await User.findOne({
-      email: email,
-      deleted: false
-    });
-  
-    if(!user) {
-      req.flash("error", `Email không tồn tại!`);
-      res.redirect("back");
-      return;
+  res.render("clients/page/user/login", {
+    pageTitle: "Đăng nhập tài khoản",
+  });
+};
+
+// [POST] /user/login
+module.exports.loginPost = async (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  const user = await User.findOne({
+    email: email,
+    deleted: false,
+  });
+
+  if (!user) {
+    req.flash("error", `Email không tồn tại!`);
+    res.redirect("back");
+    return;
+  }
+
+  if (md5(password) != user.password) {
+    req.flash("error", `Sai mật khẩu!`);
+    res.redirect("back");
+    return;
+  }
+
+  if (user.status == "inactive") {
+    req.flash("error", `Tài khoản đang bị khóa!`);
+    res.redirect("back");
+    return;
+  }
+
+  res.cookie("tokenUser", user.tokenUser);
+
+  // Lưu user_id vào collection carts
+  await Cart.updateOne(
+    {
+      _id: req.cookies.cartId,
+    },
+    {
+      user_id: user.id,
     }
-  
-    if(md5(password) != user.password) {
-      req.flash("error", `Sai mật khẩu!`);
-      res.redirect("back");
-      return;
-    }
-  
-    if(user.status == "inactive") {
-      req.flash("error", `Tài khoản đang bị khóa!`);
-      res.redirect("back");
-      return;
-    }
-  
-    res.cookie("tokenUser", user.tokenUser);
-  
-    res.redirect("/");
-  };
+  );
+
+  res.redirect("/");
+};
 // [GET] /user/logout
 module.exports.logout = async (req, res) => {
-    res.clearCookie("tokenUser");
-    res.redirect("/");
-  };
+  res.clearCookie("tokenUser");
+  res.redirect("/");
+};
 // [GET] /user/password/forgot
 module.exports.forgotPassword = async (req, res) => {
   res.render("clients/page/user/forgot-password", {
@@ -91,10 +102,10 @@ module.exports.forgotPasswordPost = async (req, res) => {
 
   const user = await User.findOne({
     email: email,
-    deleted: false
+    deleted: false,
   });
 
-  if(!user) {
+  if (!user) {
     req.flash("error", `Email không tồn tại!`);
     res.redirect("back");
     return;
@@ -106,7 +117,7 @@ module.exports.forgotPasswordPost = async (req, res) => {
   const objectForgotPassword = {
     email: email,
     otp: otp,
-    expireAt: Date.now()
+    expireAt: Date.now(),
   };
 
   const forgotPassword = new ForgotPassword(objectForgotPassword);
@@ -139,28 +150,28 @@ module.exports.otpPasswordPost = async (req, res) => {
 
   console.log({
     email: email,
-    otp: otp
+    otp: otp,
   });
 
   const result = await ForgotPassword.findOne({
     email: email,
-    otp: otp
+    otp: otp,
   });
 
-  if(!result) {
+  if (!result) {
     req.flash("error", `OTP không hợp lệ!`);
     res.redirect("back");
     return;
   }
 
   const user = await User.findOne({
-    email: email
+    email: email,
   });
 
   res.cookie("tokenUser", user.tokenUser);
 
   res.redirect("/user/password/reset");
-}
+};
 // [GET] /user/password/reset
 module.exports.resetPassword = async (req, res) => {
   res.render("clients/page/user/reset-password", {
@@ -173,11 +184,14 @@ module.exports.resetPasswordPost = async (req, res) => {
   const password = req.body.password;
   const tokenUser = req.cookies.tokenUser;
 
-  await User.updateOne({
-    tokenUser: tokenUser
-  }, {
-    password: md5(password)
-  });
+  await User.updateOne(
+    {
+      tokenUser: tokenUser,
+    },
+    {
+      password: md5(password),
+    }
+  );
 
   res.redirect("/");
 };
