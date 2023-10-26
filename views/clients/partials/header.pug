@@ -6,8 +6,11 @@ header.header
       .col-3
         .inner-logo
           a(href="/")
-            img(src=settingGeneral.logo, alt="Logo")
-
+            if(settingGeneral && settingGeneral.logo)
+              img(src=settingGeneral.logo, alt="Logo")
+            else
+              img(src="/clients/images/avtfb.jpg", alt="Logo")
+            //- img(src="/clients/images/avtfb.jpg", alt="Logo")
       .col-5
         form(
           action="/search"

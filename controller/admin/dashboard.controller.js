@@ -39,7 +39,7 @@ module.exports.dashboard = async (req, res) => {
     deleted: false
   });
 
-  res.render("admin/pages/dashboard/index", {
+  res.render("admin/page/dashboard/index", {
     pageTitle: "Tổng quan",
     statistic: statistic
   });

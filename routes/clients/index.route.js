@@ -13,12 +13,13 @@ module.exports = (app) => {
   app.use(categoryMiddleware.category);
   app.use(cartMiddleware.cartId);
   app.use(userMiddleware.infoUser);
+  app.use(settingMiddleware.settingGeneral);
   app.use("/", homeRoutes);
   console.log("route");
   app.use("/cart", cartRoutes);
   app.use("/checkout", checkoutRoutes);
   app.use("/products", productRoutes);
   app.use("/search", searchRoutes);
-  app.use(settingMiddleware.settingGeneral);
+  
   app.use("/user", userRoutes);
 }

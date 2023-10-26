@@ -1,2 +1,5 @@
 footer.footer
-  | #{settingGeneral.copyright}
+  if(settingGeneral && settingGeneral.copyright)
+    #{settingGeneral.copyright}
+  else
+    | Copyright by Toàn đẹp trai
