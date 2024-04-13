@@ -7,6 +7,14 @@ const route = require("./routes/clients/index.route");
 const methodOverride = require("method-override");
 const bodyParser = require("body-parser");
 const app = express();
+
+//Tao server socket.io
+const http = require("http");
+const { Server } = require("socket.io");
+const server = http.createServer(app);
+const io = new Server(server);
+global._io = io;
+
 const port = process.env.PORT;
 const flash = require("express-flash");
 const cookieParser = require("cookie-parser");
@@ -42,6 +50,6 @@ app.get("*", (req, res) => {
     pageTitle: "404 Not Found",
   });
 });
-app.listen(port, () => {
-  console.log(`App listening on port ${port}`);
+server.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
 });
