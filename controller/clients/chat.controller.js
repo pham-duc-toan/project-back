@@ -7,7 +7,7 @@ module.exports.index = async (req, res) => {
 
   //soket
   _io.once("connection", (socket) => {
-    socket.emit("SERVER_RETURN_ID", res.locals.user.id);
+    socket.emit("ABCD", res.locals.user.id);
     socket.on("CLIENT_SEND_MESSAGE", async (data) => {
       const fullNameUser = await User.findOne({ _id: userId }).select(
         "fullName"
