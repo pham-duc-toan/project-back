@@ -5,14 +5,13 @@ const innerBody = document.querySelector(".inner-body");
 if (innerBody) {
   innerBody.scrollTop = innerBody.scrollHeight;
 }
-console.log(idUser);
-
+var timeOut;
 // CLIENT_SEND_MESSAGE
 const formChat = document.querySelector(".inner-form");
 if (formChat) {
   const innerBody = document.querySelector(".inner-body");
   innerBody.scrollTop = innerBody.scrollHeight;
-  //emoji-picker
+  //EMOJI-PICKER
 
   //show emoji in input
   const input = formChat.querySelector("input[name='content']");
@@ -33,6 +32,12 @@ if (formChat) {
 
       // Focus vào input
       input.focus();
+      //3 dong de chen typing
+      socket.emit("CLIENT_SEND_TYPING", "show");
+      clearTimeout(timeOut);
+      timeOut = setTimeout(() => {
+        socket.emit("CLIENT_SEND_TYPING", "hidden");
+      }, 3000);
     });
 
   //end show emoji in input
@@ -48,8 +53,53 @@ if (formChat) {
     tooltip.classList.toggle("shown");
   };
   //end show emoji when click button
-  //end emoji-picker
+  //END EMOJI-PICKER
+  //typing
 
+  const innerListTyping = document.querySelector(".inner-list-typing");
+  if (innerListTyping) {
+    input.addEventListener("keyup", () => {
+      socket.emit("CLIENT_SEND_TYPING", "show");
+      //tác dụng của socket trường hợp này là để gửi tới mọi người khác cùng js để render ra typing
+      clearTimeout(timeOut);
+      // vấn đề là xóa timeOut nhưng chưa chắc timeOut này đã trùng với idUser. ví dụ : A là người typing, thì B gõ keyup, B trở thành người typing cùng A, nhưng tự dưng lại xóa cái hẹn giờ tắt của A đi và hẹn giờ tắt cho B
+      timeOut = setTimeout(() => {
+        socket.emit("CLIENT_SEND_TYPING", "hidden");
+      }, 3000);
+    });
+
+    socket.on("SERVER_RETURN_TYPING", (data) => {
+      if (data.type == "show") {
+        const exitTyping = innerListTyping.querySelector(
+          `[user-id="${data.userId}"]`
+        );
+        if (!exitTyping) {
+          const boxTyping = document.createElement("div");
+          boxTyping.classList.add("box-typing");
+          boxTyping.setAttribute("user-id", data.userId);
+          boxTyping.innerHTML = `
+          <div class="inner-name">
+            ${data.fullName}
+          </div>
+          <div class="inner-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        `;
+          innerListTyping.appendChild(boxTyping);
+          innerBody.scrollTop = innerBody.scrollHeight;
+        }
+      } else {
+        const exitTyping = innerListTyping.querySelector(
+          `[user-id="${data.userId}"]`
+        );
+        innerListTyping.removeChild(exitTyping);
+      }
+    });
+    //xóa hoặc render typing
+  }
+  //end typing
   formChat.addEventListener("submit", (e) => {
     e.preventDefault();
     const input = formChat.querySelector("input");
@@ -58,6 +108,7 @@ if (formChat) {
     if (content) {
       socket.emit("CLIENT_SEND_MESSAGE", content);
       input.value = "";
+      socket.emit("CLIENT_SEND_TYPING", "hidden");
     }
   });
 }
@@ -65,7 +116,7 @@ if (formChat) {
 //SERVER_RETURN_MESSAGE
 socket.on("SERVER_RETURN_MESSAGE", (data) => {
   const div = document.createElement("div");
-
+  const innerListTyping = document.querySelector(".inner-list-typing");
   if (data.idSendMess != idUser) {
     div.classList.add("inner-incoming");
     div.innerHTML = `
@@ -79,7 +130,7 @@ socket.on("SERVER_RETURN_MESSAGE", (data) => {
   `;
   }
 
-  innerBody.appendChild(div);
+  innerBody.insertBefore(div, innerListTyping);
 
   innerBody.scrollTop = innerBody.scrollHeight;
 });

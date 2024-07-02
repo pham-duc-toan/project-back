@@ -3,20 +3,17 @@ const User = require("../../models/user.model");
 // [GET] /chat/
 module.exports.index = async (req, res) => {
   const userId = res.locals.user.id;
+  const fullName = res.locals.user.fullName;
   const chats = await Chat.find({ deleted: false });
 
   //soket
   _io.once("connection", (socket) => {
-    socket.emit("ABCD", res.locals.user.id);
+    //chat basic
     socket.on("CLIENT_SEND_MESSAGE", async (data) => {
-      const fullNameUser = await User.findOne({ _id: userId }).select(
-        "fullName"
-      );
-
       const newChat = new Chat({
         user_id: userId,
         content: data,
-        fullNameUser: fullNameUser.fullName,
+        fullNameUser: fullName,
       });
       await newChat.save();
 
@@ -26,6 +23,16 @@ module.exports.index = async (req, res) => {
         idSendMess: res.locals.user.id,
       });
     });
+    //end chat basic
+    //typing
+    socket.on("CLIENT_SEND_TYPING", async (type) => {
+      socket.broadcast.emit("SERVER_RETURN_TYPING", {
+        userId: userId,
+        fullName: fullName,
+        type: type,
+      });
+    });
+    //end typing
   });
 
   //end soket
