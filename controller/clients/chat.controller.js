@@ -12,14 +12,16 @@ module.exports.index = async (req, res) => {
     socket.on("CLIENT_SEND_MESSAGE", async (data) => {
       const newChat = new Chat({
         user_id: userId,
-        content: data,
+        content: data.content,
+        images: data.images,
         fullNameUser: fullName,
       });
       await newChat.save();
 
       _io.emit("SERVER_RETURN_MESSAGE", {
         fullName: res.locals.user.fullName,
-        content: data,
+        content: data.content,
+        images: data.images,
         idSendMess: res.locals.user.id,
       });
     });

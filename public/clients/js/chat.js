@@ -1,6 +1,7 @@
 import * as Popper from "https://cdn.jsdelivr.net/npm/@popperjs/core@^2/dist/esm/index.js";
 //khi có import thì ko nhận được server return id , ko hiểu
 var idUser = document.querySelector(".data-id").getAttribute("data-id");
+
 const innerBody = document.querySelector(".inner-body");
 if (innerBody) {
   innerBody.scrollTop = innerBody.scrollHeight;
@@ -100,14 +101,22 @@ if (formChat) {
     //xóa hoặc render typing
   }
   //end typing
+  const upload = new FileUploadWithPreview.FileUploadWithPreview(
+    "upload-images",
+    {
+      multiple: true,
+      maxFileCount: 6,
+    }
+  );
   formChat.addEventListener("submit", (e) => {
     e.preventDefault();
     const input = formChat.querySelector("input");
     const content = input.value;
-
-    if (content) {
-      socket.emit("CLIENT_SEND_MESSAGE", content);
+    const images = upload.cachedFileArray;
+    if (content || images.length > 0) {
+      socket.emit("CLIENT_SEND_MESSAGE", { content, images });
       input.value = "";
+      upload.resetPreviewPanel();
       socket.emit("CLIENT_SEND_TYPING", "hidden");
     }
   });
