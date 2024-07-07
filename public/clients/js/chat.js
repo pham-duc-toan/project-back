@@ -7,12 +7,12 @@ if (innerBody) {
   innerBody.scrollTop = innerBody.scrollHeight;
 }
 var timeOut;
-// CLIENT_SEND_MESSAGE
+
 const formChat = document.querySelector(".inner-form");
 if (formChat) {
   const innerBody = document.querySelector(".inner-body");
   innerBody.scrollTop = innerBody.scrollHeight;
-  //EMOJI-PICKER
+  //EMOJI-PICKER------------------------------------------------------------------------------------------------------/\
 
   //show emoji in input
   const input = formChat.querySelector("input[name='content']");
@@ -54,8 +54,9 @@ if (formChat) {
     tooltip.classList.toggle("shown");
   };
   //end show emoji when click button
-  //END EMOJI-PICKER
-  //typing
+  //END EMOJI-PICKER------------------------------------------------------------------------------------------------------\/
+
+  //typing-----------------------------------------------------------------------------------------------------------------/\
 
   const innerListTyping = document.querySelector(".inner-list-typing");
   if (innerListTyping) {
@@ -100,7 +101,9 @@ if (formChat) {
     });
     //xóa hoặc render typing
   }
-  //end typing
+  //end typing-----------------------------------------------------------------------------------------------------------\/
+
+  // CLIENT_SEND_MESSAGE------------------------------------------------------------------------------------------------/\
   const upload = new FileUploadWithPreview.FileUploadWithPreview(
     "upload-images",
     {
@@ -111,18 +114,23 @@ if (formChat) {
   formChat.addEventListener("submit", (e) => {
     e.preventDefault();
     const input = formChat.querySelector("input");
-    const content = input.value;
-    const images = upload.cachedFileArray;
+    const content = e.target.elements.content.value;
+    const images = upload.cachedFileArray || [];
     if (content || images.length > 0) {
-      socket.emit("CLIENT_SEND_MESSAGE", { content, images });
+      const data = {
+        content: content,
+        images: images,
+      };
+
+      socket.emit("CLIENT_SEND_MESSAGE", data);
       input.value = "";
       upload.resetPreviewPanel();
       socket.emit("CLIENT_SEND_TYPING", "hidden");
     }
   });
 }
-// end CLIENT_SEND_MESSAGE
-//SERVER_RETURN_MESSAGE
+// end CLIENT_SEND_MESSAGE------------------------------------------------------------------------------------------------\/
+//SERVER_RETURN_MESSAGE------------------------------------------------------------------------------------------------/\
 socket.on("SERVER_RETURN_MESSAGE", (data) => {
   const div = document.createElement("div");
   const innerListTyping = document.querySelector(".inner-list-typing");
@@ -130,17 +138,31 @@ socket.on("SERVER_RETURN_MESSAGE", (data) => {
     div.classList.add("inner-incoming");
     div.innerHTML = `
     <div class="inner-name">${data.fullName}<div>
-    <div class="inner-content">${data.content}<div>
   `;
   } else {
     div.classList.add("inner-outgoing");
-    div.innerHTML = `
-    <div class="inner-content">${data.content}<div>
-  `;
   }
+  let images = "";
+  let content = "";
+  if (data.images.length > 0) {
+    let imgs = "";
+    data.images.forEach((ele) => {
+      imgs += `
+      <img src='${ele}'/>
+      `;
+    });
+    images = `<div class="inner-images">${imgs}</div>`;
+  }
+  if (data.content) {
+    images = `<div class="inner-content">${data.content}</div>`;
+  }
+  div.innerHTML = `
+    ${images}
+    ${content}
+  `;
 
   innerBody.insertBefore(div, innerListTyping);
 
   innerBody.scrollTop = innerBody.scrollHeight;
 });
-//end SERVER_RETURN_MESSAGE
+//end SERVER_RETURN_MESSAGE----------------------------------------------------------------------------------------------\/
