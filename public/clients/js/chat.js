@@ -5,12 +5,14 @@ var idUser = document.querySelector(".data-id").getAttribute("data-id");
 const innerBody = document.querySelector(".inner-body");
 if (innerBody) {
   innerBody.scrollTop = innerBody.scrollHeight;
+  // viewer fullscreen
+  const gallery = new Viewer(innerBody);
+  // end viewer fullscreen
 }
 var timeOut;
 
 const formChat = document.querySelector(".inner-form");
 if (formChat) {
-  const innerBody = document.querySelector(".inner-body");
   innerBody.scrollTop = innerBody.scrollHeight;
   //EMOJI-PICKER------------------------------------------------------------------------------------------------------/\
 
@@ -164,6 +166,7 @@ socket.on("SERVER_RETURN_MESSAGE", (data) => {
 
   innerBody.insertBefore(div, innerListTyping);
 
+  const gallery = new Viewer(div.querySelector(".inner-images"));
   innerBody.scrollTop = innerBody.scrollHeight;
 });
 //end SERVER_RETURN_MESSAGE----------------------------------------------------------------------------------------------\/

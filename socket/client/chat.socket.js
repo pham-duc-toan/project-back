@@ -1,4 +1,3 @@
-const User = require("../../models/user.model");
 const Chat = require("../../models/chat.model");
 const bufferToLinkOnlineByCloudinary = require("../../helpers/bufferToLinkOnlineCloudinary");
 module.exports = async (res) => {
@@ -19,7 +18,7 @@ module.exports = async (res) => {
         images: images,
         fullNameUser: fullName,
       });
-      // await newChat.save();
+      await newChat.save();
 
       _io.emit("SERVER_RETURN_MESSAGE", {
         fullName: res.locals.user.fullName,

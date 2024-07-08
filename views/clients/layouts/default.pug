@@ -6,6 +6,7 @@ html
     link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css")
     link(rel="stylesheet", href="/clients/css/style.css")
     link(rel="stylesheet", href="https://unpkg.com/file-upload-with-preview/dist/style.css")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.css")
   body
     include ../partials/header.pug
     
@@ -25,6 +26,8 @@ html
     //-end upload file with preview
     script(type="module" src="/clients/js/chat.js")
     //- end socket io
-   
+    //- viewer fullscreen
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.js") 
+    //- end viewer fullscreen
     
     script(src="/clients/js/script.js") 
