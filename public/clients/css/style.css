@@ -268,8 +268,8 @@
 
 .inner-outgoing{
   display: flex;
-  justify-content: flex-end;
-  
+  align-items: flex-end;
+  flex-direction: column;
 }
 .inner-incoming .inner-content {
   text-align: left;

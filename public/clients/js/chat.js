@@ -148,17 +148,18 @@ socket.on("SERVER_RETURN_MESSAGE", (data) => {
     let imgs = "";
     data.images.forEach((ele) => {
       imgs += `
-      <img src='${ele}'/>
+      <img src='${ele}'>
       `;
     });
     images = `<div class="inner-images">${imgs}</div>`;
   }
   if (data.content) {
-    images = `<div class="inner-content">${data.content}</div>`;
+    content = `<div class="inner-content">${data.content}</div>`;
   }
-  div.innerHTML = `
-    ${images}
+
+  div.innerHTML += `
     ${content}
+    ${images}  
   `;
 
   innerBody.insertBefore(div, innerListTyping);
