@@ -165,8 +165,10 @@ socket.on("SERVER_RETURN_MESSAGE", (data) => {
   `;
 
   innerBody.insertBefore(div, innerListTyping);
-
-  const gallery = new Viewer(div.querySelector(".inner-images"));
+  const galleryViewNew = div.querySelector(".inner-images");
+  if (galleryViewNew) {
+    const gallery = new Viewer();
+  }
   innerBody.scrollTop = innerBody.scrollHeight;
 });
 //end SERVER_RETURN_MESSAGE----------------------------------------------------------------------------------------------\/
