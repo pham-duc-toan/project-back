@@ -15,7 +15,7 @@ module.exports = (res) => {
           deleted: false,
           status: "active",
         });
-        // console.log(nguoinhanBefore);
+
         if (nguoinhanBefore && nguoinhanBefore.requestFromMe.includes(myId)) {
           const roomId = gener.generateRandomString(30);
           await User.updateOne(
@@ -117,6 +117,64 @@ module.exports = (res) => {
           nguoinhan: userTarget,
           nguoiguiInfo,
           nguoinhanInfo,
+        });
+      });
+      //TOI CHAP NHAN LOI MOI
+      socket.on("CLIENT_SEND_ACCEPT_REQUEST", async (data) => {
+        const { userTarget } = data;
+        const roomId = gener.generateRandomString(30);
+
+        const nguoigui = await User.findOneAndUpdate(
+          { _id: myId },
+          {
+            $pull: { requestToMe: userTarget },
+            $push: {
+              listFriend: {
+                room_id: roomId,
+                friend_id: userTarget,
+              },
+            },
+          },
+          { new: true, fields: "id fullName avatar" }
+        );
+
+        const nguoinhan = await User.findOneAndUpdate(
+          { _id: userTarget },
+          {
+            $pull: { requestFromMe: myId },
+            $push: {
+              listFriend: {
+                room_id: roomId,
+                friend_id: myId,
+              },
+            },
+          },
+          { new: true, fields: "id fullName avatar" }
+        );
+
+        _io.emit("UPDATE_DISPLAY_AFTER_ACCEPT", {
+          nguoigui,
+          nguoinhan,
+        });
+      });
+      //TOI HUY CHAP NHAN LOI MOI
+      socket.on("CLIENT_SEND_REFUSE_REQUEST", async (data) => {
+        const { userTarget } = data;
+        const nguoigui = await User.findOneAndUpdate(
+          { _id: myId },
+          { $pull: { requestToMe: userTarget } },
+          { new: true, fields: "id fullName avatar" }
+        );
+
+        const nguoinhan = await User.findOneAndUpdate(
+          { _id: userTarget },
+          { $pull: { requestFromMe: myId } },
+          { new: true, fields: "id fullName avatar" }
+        );
+
+        _io.emit("UPDATE_DISPLAY_AFTER_REFUSE", {
+          nguoigui,
+          nguoinhan,
         });
       });
     });

@@ -7,7 +7,7 @@ module.exports.index = async (req, res) => {
   let friends = [];
   for (const friend of friendsData) {
     const friendInfo = await User.findOne({
-      _id: friend.user_id,
+      _id: friend.friend_id,
       deleted: false,
       status: "active",
     }).select("id avatar fullName");
@@ -26,7 +26,7 @@ module.exports.friendSuggest = async (req, res) => {
   listFilter.push(res.locals.user.id);
   const friendsData = res.locals.user.listFriend;
   for (const friend of friendsData) {
-    listFilter.push(friend.user_id);
+    listFilter.push(friend.friend_id);
   }
 
   const notFriends = await User.find({
