@@ -98,7 +98,7 @@ if (formChat) {
         const exitTyping = innerListTyping.querySelector(
           `[user-id="${data.userId}"]`
         );
-        innerListTyping.removeChild(exitTyping);
+        if (exitTyping) innerListTyping.removeChild(exitTyping);
       }
     });
     //xóa hoặc render typing
@@ -167,7 +167,7 @@ socket.on("SERVER_RETURN_MESSAGE", (data) => {
   innerBody.insertBefore(div, innerListTyping);
   const galleryViewNew = div.querySelector(".inner-images");
   if (galleryViewNew) {
-    const gallery = new Viewer();
+    const gallery = new Viewer(galleryViewNew);
   }
   innerBody.scrollTop = innerBody.scrollHeight;
 });

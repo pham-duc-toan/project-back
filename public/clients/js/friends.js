@@ -1,5 +1,9 @@
 //lấy id
-const myId = document.querySelector("[myId]").getAttribute("myId");
+var myId;
+const myIdItem = document.querySelector("[myId]");
+if (myIdItem) {
+  myId = myIdItem.getAttribute("myId");
+}
 
 //WHEN ADD
 const btnAddFriend = document.querySelectorAll("[btn-add-friend]");

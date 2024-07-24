@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema(
         friend_id: String,
       },
     ],
+    listRoomChat: Array,
     deleted: {
       type: Boolean,
       default: false,

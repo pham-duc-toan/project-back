@@ -6,21 +6,27 @@ block main
     include ../../partials/list-btn-friends.pug
     .row
       .col-12
-        +box-head("Danh sách Bạn bè")
-    .row(page-list-friends) 
-      each user in listUsers 
-        .col-6(box-user-id=user.id)
+        +box-head("Danh sách phòng chat")
+    .row.mb-3 
+      .col-12 
+        a(
+          href='/chat/rooms-chat/create'
+          class='btn btn-sm btn-success mr-1'
+        ) Tạo phòng chat
+    .row  
+      each room in roomsChat 
+        .col-6(room-id=room.room_chat_id)
           div(class="box-user")
             div(class="inner-avatar")
                 img(
-                    src=(user.avatar ? user.avatar : "/clients/images/avt-user.png" )
-                    alt=user.fullName
+                    src=(room.avatar ? room.avatar : "/clients/images/avt-room-chat.jpg" )
+                    alt=room.title
                 )
             div(class="inner-info") 
-                div(class="inner-name") #{user.fullName}
+                div(class="inner-name") #{room.title}
                 div(class="inner-buttons") 
                   a(
-                    href=`/chat/inroom/${user.room_id}`
+                    href=`/chat/inroom/${room.room_chat_id}`
                     class="btn btn-sm btn-primary mr-1"
                   ) Nhắn tin
               

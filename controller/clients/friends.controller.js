@@ -12,6 +12,7 @@ module.exports.index = async (req, res) => {
       status: "active",
     }).select("id avatar fullName");
     if (friendInfo) {
+      friendInfo.room_id = friend.room_id;
       friends.push(friendInfo);
     }
   }

@@ -1,7 +1,8 @@
 const Chat = require("../../models/chat.model");
 const bufferToLinkOnlineByCloudinary = require("../../helpers/bufferToLinkOnlineCloudinary");
-module.exports = async (res) => {
+module.exports = async (res, room_chat_id) => {
   _io.once("connection", (socket) => {
+    socket.join(room_chat_id);
     //chat basic
     const userId = res.locals.user.id;
     const fullName = res.locals.user.fullName;
@@ -11,16 +12,16 @@ module.exports = async (res) => {
         let link = await bufferToLinkOnlineByCloudinary(image);
         images.push(link);
       }
-
       const newChat = new Chat({
         user_id: userId,
         content: data.content,
         images: images,
         fullNameUser: fullName,
+        room_chat_id: room_chat_id,
       });
       await newChat.save();
 
-      _io.emit("SERVER_RETURN_MESSAGE", {
+      _io.to(room_chat_id).emit("SERVER_RETURN_MESSAGE", {
         fullName: res.locals.user.fullName,
         content: data.content,
         images: images,
@@ -30,7 +31,7 @@ module.exports = async (res) => {
     //end chat basic
     //typing
     socket.on("CLIENT_SEND_TYPING", async (type) => {
-      socket.broadcast.emit("SERVER_RETURN_TYPING", {
+      socket.broadcast.to(room_chat_id).emit("SERVER_RETURN_TYPING", {
         userId: userId,
         fullName: fullName,
         type: type,
