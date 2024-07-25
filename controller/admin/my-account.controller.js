@@ -29,5 +29,5 @@ module.exports.editPatch = async (req, res) => {
 
   await Account.updateOne({ _id: res.locals.user.id }, req.body);
 
-  res.redirect(`${system.prefixAdmin}/my-account`);
+  res.redirect(`/${system.prefixAdmin}/my-account`);
 };
