@@ -268,30 +268,34 @@ module.exports.edit = async (req, res) => {
 
 // [PATCH] /admin/products/edit/:id
 module.exports.editPatch = async (req, res) => {
-  const id = req.params.id;
+  try {
+    const id = req.params.id;
 
-  req.body.price = parseInt(req.body.price);
-  req.body.discountPercentage = parseInt(req.body.discountPercentage);
-  req.body.stock = parseInt(req.body.stock);
+    req.body.price = parseInt(req.body.price);
+    req.body.discountPercentage = parseInt(req.body.discountPercentage);
+    req.body.stock = parseInt(req.body.stock);
 
-  req.body.position = parseInt(req.body.position);
+    const updatedBy = {
+      account_id: res.locals.user.id,
+      updatedAt: new Date(),
+    };
 
-  const updatedBy = {
-    account_id: res.locals.user.id,
-    updatedAt: new Date(),
-  };
+    await Product.updateOne(
+      { _id: id },
+      {
+        ...req.body,
+        $push: { updatedBy: updatedBy },
+      }
+    );
 
-  await Product.updateOne(
-    { _id: id },
-    {
-      ...req.body,
-      $push: { updatedBy: updatedBy },
-    }
-  );
+    req.flash("success", "Cập nhật sản phẩm thành công!");
 
-  req.flash("success", "Cập nhật sản phẩm thành công!");
-
-  res.redirect(`/${systemConfig.prefixAdmin}/products`);
+    res.redirect(`/${systemConfig.prefixAdmin}/products`);
+  } catch (error) {
+    console.log(req.body);
+    console.log(error);
+    res.redirect("back");
+  }
 };
 // [GET] /admin/products/detail/:id
 module.exports.detail = async (req, res) => {

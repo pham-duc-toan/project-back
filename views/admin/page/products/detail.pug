@@ -5,13 +5,13 @@ block main
     if (product.title)
       h1(class="mb-4") #{product.title}
 
-    if (product.price)
+    if (product.price||product.price===0)
       div(class="mb-4") Giá: <b>#{product.price}$</b>
 
-    if (product.discountPercentage)
+    if (product.discountPercentage||product.price===0)
       div(class="mb-4") Giảm giá: <b>#{product.discountPercentage}%</b>
 
-    if (product.stock)
+    if (product.stock||product.price===0)
       div(class="mb-4") Còn lại: <b>#{product.stock}</b>
 
     if (product.thumbnail)
