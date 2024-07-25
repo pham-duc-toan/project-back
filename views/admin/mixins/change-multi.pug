@@ -1,5 +1,6 @@
 mixin change-multi(path)
   form(
+    class="d-none"
     action=path
     method="POST"
     form-change-multi
@@ -9,7 +10,6 @@ mixin change-multi(path)
         select(name="type" class="form-control")
           option(value="active") Hoạt động
           option(value="inactive") Dừng hoạt động
-          option(value="change-position") Thay đổi vị trí
           option(value="delete-all") Xóa tất cả
       .form-group
         input(
