@@ -2,7 +2,7 @@ const md5 = require("md5");
 
 const Account = require("../../models/account.model");
 const Role = require("../../models/role.model");
-
+const generate = require("../../helpers/generate");
 const systemConfig = require("../../config/system");
 
 // [GET] /admin/accounts
@@ -36,9 +36,9 @@ module.exports.create = async (req, res) => {
 
 // [POST] /admin/accounts/create
 module.exports.createPost = async (req, res) => {
-  req.body.pass = req.body.password;
   req.body.password = md5(req.body.password);
-
+  const token = generate.generateRandomString(30);
+  req.body.token = token;
   const record = new Account(req.body);
   await record.save();
 
@@ -71,13 +71,7 @@ module.exports.edit = async (req, res) => {
 
 // [PATCH] /admin/accounts/edit/:id
 module.exports.editPatch = async (req, res) => {
-  if(req.body.password) {
-    req.body.password = md5(req.body.password);
-  } else {
-    delete req.body.password;
-  }
-
   await Account.updateOne({ _id: req.params.id }, req.body);
 
-  res.redirect("back");
+  res.redirect(`/${systemConfig.prefixAdmin}/accounts`);
 };
