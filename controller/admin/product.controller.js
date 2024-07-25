@@ -222,18 +222,15 @@ module.exports.create = async (req, res) => {
 module.exports.createPost = async (req, res) => {
   req.body.price = parseInt(req.body.price);
   req.body.discountPercentage = parseInt(req.body.discountPercentage);
+
   req.body.stock = parseInt(req.body.stock);
 
-  if (req.body.position === "") {
-    const allProduct = await Product.find();
-    var position = 0;
-    for (const product of allProduct) {
-      position = max(product.position, position);
-    }
-    req.body.position = position + 1;
-  } else {
-    req.body.position = parseInt(req.body.position);
+  const allProduct = await Product.find();
+  var position = 0;
+  for (const product of allProduct) {
+    position = Math.max(product.position, position);
   }
+  req.body.position = position + 1;
 
   req.body.createdBy = {
     account_id: res.locals.user.id,
@@ -241,7 +238,7 @@ module.exports.createPost = async (req, res) => {
 
   const product = new Product(req.body);
   await product.save();
-
+  req.flash("success", `Tạo thành công`);
   res.redirect(`/${systemConfig.prefixAdmin}/products`);
 };
 // [GET] /admin/products/edit/:id
@@ -294,7 +291,7 @@ module.exports.editPatch = async (req, res) => {
 
   req.flash("success", "Cập nhật sản phẩm thành công!");
 
-  res.redirect("back");
+  res.redirect(`/${systemConfig.prefixAdmin}/products`);
 };
 // [GET] /admin/products/detail/:id
 module.exports.detail = async (req, res) => {
