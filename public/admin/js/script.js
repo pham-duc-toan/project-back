@@ -1,19 +1,39 @@
-//*tóm tắt: 
-//  -những hàm mục đích sắp xếp data (ko đổi data) thì sẽ gửi yêu cầu qua url, để back lấy data từ url qua req.query, url sẽ thêm dấu ? (ko phải thêm route con) , lọc qua hàm find
-//  -những hàm thay đổi data thì sẽ gửi yêu cầu qua cái form, để back sẽ lấy từ data từ form quareq.body hoặc url qua req.params, url thêm / (phải thêm route con), thay đổi data qua hàm updateMany hoặc updateOne, sau đó res.redirect("back") để render lại giao diện với data mới
-
-
-
+//change position
+const buttonChangePositionList = document.querySelectorAll(
+  "[button-change-position]"
+);
+const buttonCancelSwap = document.querySelector(
+  "[button-cancel-selected-swap]"
+);
+const formChangePosition = document.querySelector("#form-change-position");
+if (buttonCancelSwap && buttonChangePositionList.length && formChangePosition) {
+  buttonCancelSwap.addEventListener("click", () => {
+    window.history.back();
+  });
+  buttonChangePositionList.forEach((ele) => {
+    ele.addEventListener("click", () => {
+      formChangePosition.action =
+        formChangePosition.getAttribute("data-path") +
+        "/" +
+        buttonCancelSwap.getAttribute("data-id") +
+        "/" +
+        ele.getAttribute("data-id") +
+        "?_method=PATCH";
+      formChangePosition.submit();
+    });
+  });
+}
+//end change position
 // Button Lọc Status
 const buttonsStatus = document.querySelectorAll("[button-status]");
-if(buttonsStatus.length > 0) {
+if (buttonsStatus.length > 0) {
   let url = new URL(window.location.href);
-  
-  buttonsStatus.forEach(button => {
+
+  buttonsStatus.forEach((button) => {
     button.addEventListener("click", () => {
       const status = button.getAttribute("button-status");
 
-      if(status != "") {
+      if (status != "") {
         url.searchParams.set("status", status);
       } else {
         url.searchParams.delete("status");
@@ -27,14 +47,14 @@ if(buttonsStatus.length > 0) {
 
 // Lọc Theo Form Search
 const formSearch = document.querySelector("#form-search");
-if(formSearch) {
+if (formSearch) {
   let url = new URL(window.location.href);
 
   formSearch.addEventListener("submit", (e) => {
     e.preventDefault();
     const value = e.target.elements.keyword.value;
 
-    if(value != "") {
+    if (value != "") {
       url.searchParams.set("keyword", value);
     } else {
       url.searchParams.delete("keyword");
@@ -46,10 +66,10 @@ if(formSearch) {
 // End Lọc Theo Form Search
 // Pagination
 const buttonsPagination = document.querySelectorAll("[button-pagination]");
-if(buttonsPagination.length > 0) {
+if (buttonsPagination.length > 0) {
   let url = new URL(window.location.href);
 
-  buttonsPagination.forEach(button => {
+  buttonsPagination.forEach((button) => {
     button.addEventListener("click", () => {
       const page = button.getAttribute("button-pagination");
 
@@ -62,11 +82,11 @@ if(buttonsPagination.length > 0) {
 // End Pagination
 // Change Status
 const buttonsChangeStatus = document.querySelectorAll("[button-change-status]");
-if(buttonsChangeStatus.length > 0) {
+if (buttonsChangeStatus.length > 0) {
   const formChangeStatus = document.querySelector("#form-change-status");
   const path = formChangeStatus.getAttribute("data-path");
 
-  buttonsChangeStatus.forEach(button => {
+  buttonsChangeStatus.forEach((button) => {
     button.addEventListener("click", () => {
       const statusCurrent = button.getAttribute("data-status");
       const id = button.getAttribute("data-id");
@@ -80,9 +100,8 @@ if(buttonsChangeStatus.length > 0) {
 
       formChangeStatus.submit();
     });
-  })
+  });
 }
-
 
 // End Change Status
 
@@ -110,7 +129,7 @@ if (checkboxMulti) {
         "input[name='id']:checked"
       ).length;
 
-      if(countChecked == inputsId.length) {
+      if (countChecked == inputsId.length) {
         inputCheckAll.checked = true;
       } else {
         inputCheckAll.checked = false;
@@ -122,7 +141,7 @@ if (checkboxMulti) {
 
 // form-change-multi
 const formChangeMulti = document.querySelector("[form-change-multi]");
-if(formChangeMulti) {
+if (formChangeMulti) {
   formChangeMulti.addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -131,31 +150,33 @@ if(formChangeMulti) {
       "input[name='id']:checked"
     );
     const typeChange = e.target.elements.type.value;
-    
-    if(typeChange == "delete-all") {
+
+    if (typeChange == "delete-all") {
       const isConfirm = confirm("Bạn có chắc muốn xóa những bản ghi này?");
 
-      if(!isConfirm) {
+      if (!isConfirm) {
         return;
       }
     }
 
-    if(inputsChecked.length > 0) {
+    if (inputsChecked.length > 0) {
       let ids = [];
       const inputIds = formChangeMulti.querySelector("input[name='ids']");
 
-      inputsChecked.forEach(input => {
+      inputsChecked.forEach((input) => {
         const id = input.value;
 
-        if(typeChange == "change-position") {
-          const position = input.closest("tr").querySelector("input[name='position']").value;
+        if (typeChange == "change-position") {
+          const position = input
+            .closest("tr")
+            .querySelector("input[name='position']").value;
 
           ids.push(`${id}-${position}`);
         } else {
           ids.push(id);
         }
       });
-      
+
       inputIds.value = ids.join(", ");
 
       formChangeMulti.submit();
@@ -165,7 +186,7 @@ if(formChangeMulti) {
   });
 }
 // End form-change-multi
-// Delete 
+// Delete
 const buttonsDelete = document.querySelectorAll("[button-delete]");
 if (buttonsDelete.length > 0) {
   const formDeleteItem = document.querySelector("#form-delete-item");
@@ -175,7 +196,7 @@ if (buttonsDelete.length > 0) {
     button.addEventListener("click", () => {
       const confirmDelete = confirm("Bạn có chắc muốn xóa bản ghi này?");
 
-      if(confirmDelete) {
+      if (confirmDelete) {
         const id = button.getAttribute("data-id");
 
         const action = path + `/${id}?_method=DELETE`;
@@ -190,7 +211,7 @@ if (buttonsDelete.length > 0) {
 // End delete
 // Show Alert
 const showAlert = document.querySelector("[show-alert]");
-if(showAlert) {
+if (showAlert) {
   const time = parseInt(showAlert.getAttribute("data-time")) || 3000;
   const closeAlert = showAlert.querySelector("[close-alert]");
 
@@ -205,9 +226,11 @@ if(showAlert) {
 // End Show Alert
 // Upload Image
 const uploadImage = document.querySelector("[upload-image]");
-if(uploadImage) {
+if (uploadImage) {
   const uploadImageInput = uploadImage.querySelector("[upload-image-input]");
-  const uploadImagePreview = uploadImage.querySelector("[upload-image-preview]");
+  const uploadImagePreview = uploadImage.querySelector(
+    "[upload-image-preview]"
+  );
 
   uploadImageInput.addEventListener("change", (e) => {
     if (e.target.files.length) {
@@ -220,7 +243,7 @@ if(uploadImage) {
 // End Upload Image
 // Sort
 const sort = document.querySelector("[sort]");
-if(sort) {
+if (sort) {
   let url = new URL(window.location.href);
 
   const sortSelect = sort.querySelector("[sort-select]");
@@ -249,9 +272,11 @@ if(sort) {
   const sortKey = url.searchParams.get("sortKey");
   const sortValue = url.searchParams.get("sortValue");
 
-  if(sortKey && sortValue) {
+  if (sortKey && sortValue) {
     const stringSort = `${sortKey}-${sortValue}`;
-    const optionSelected = sortSelect.querySelector(`option[value='${stringSort}']`);
+    const optionSelected = sortSelect.querySelector(
+      `option[value='${stringSort}']`
+    );
     optionSelected.selected = true;
     // optionSelected.setAttribute("selected", true);
   }

@@ -76,13 +76,10 @@ block main
                   td #{item.title}
                   td #{item.price}$
                   td
-                    input(
-                      type="number"
-                      value=item.position
-                      style="width: 60px"
-                      min="1"
-                      name="position"
-                    )
+                    a(
+                      class="btn btn-warning"
+                      href=`/${prefixAdmin}/products/position/swap/${item.id}`
+                    ) Đổi
                   td
                     if(item.status == "active")
                       button(
