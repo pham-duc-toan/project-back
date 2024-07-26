@@ -1,5 +1,5 @@
 extends ../../layouts/default.pug
-
+include ../../mixins/moment.pug
 block main
   if(role.permissions.includes("products_view"))
     if (product.title)
@@ -20,6 +20,8 @@ block main
           src=product.thumbnail
           style="width: 100px"
         )
+    if (product.product_category_title)
+      div(class="mb-4") Danh mục: <b>#{product.product_category_title}</b>
 
     if (product.status)
       div(class="mb-4")
@@ -32,4 +34,18 @@ block main
     
 
     if (product.description)
+      div(class="mb-4") Mô tả
       div(class="mb-4") !{product.description}
+    if(userCreated)
+      div(class="mb-4") Người tạo:  
+        div(class="mb-4") 
+          span(class="mr-4") 
+            a(href=`/${prefixAdmin}/accounts/detail/${userCreated._id}`) #{userCreated.fullName}
+          +formatDateTime(product.createdAt)
+    if(listUserUpdated && listUserUpdated.length>0)
+      div(class="mb-4") Lịch sử cập nhật:
+      each userUpdated in listUserUpdated
+        div(class="mb-4") 
+          span(class="mr-4")
+            a(href=`/${prefixAdmin}/accounts/detail/${userUpdated.infoUser._id}`) #{userUpdated.infoUser.fullName}
+          +formatDateTime(userUpdated.updatedAt)

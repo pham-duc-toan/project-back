@@ -215,7 +215,6 @@ module.exports.detail = async (req, res) => {
           .select("id fullName")
           .lean();
         ele["infoUser"] = infoUser;
-        // console.log(ele);
         return ele;
       })
     );

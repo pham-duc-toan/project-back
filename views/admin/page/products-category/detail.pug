@@ -25,11 +25,11 @@ block main
       div(class="mb-4") 
         span(class="mr-4") 
           a(href=`/${prefixAdmin}/accounts/detail/${userCreated._id}`) #{userCreated.fullName}
-        +formatDateTime(record.createAt)
+        +formatDateTime(record.createdAt)
   if(listUserUpdated && listUserUpdated.length>0)
     div(class="mb-4") Lịch sử cập nhật:
     each userUpdated in listUserUpdated
       div(class="mb-4") 
         span(class="mr-4")
           a(href=`/${prefixAdmin}/accounts/detail/${userUpdated.infoUser._id}`) #{userUpdated.infoUser.fullName}
-        +formatDateTime(userUpdated.createAt)
+        +formatDateTime(userUpdated.updatedAt)

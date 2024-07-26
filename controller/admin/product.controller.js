@@ -304,11 +304,43 @@ module.exports.detail = async (req, res) => {
       deleted: false,
     });
 
+    if (product.product_category_id) {
+      const category = await ProductCategory.findOne({
+        _id: product.product_category_id,
+      });
+
+      if (category) {
+        product.product_category_title = category.title;
+      }
+    }
+    var userCreated;
+    if (product.createdBy.account_id) {
+      userCreated = await Account.findOne({
+        _id: product.createdBy.account_id,
+      }).select("id fullName");
+    }
+    var listUserUpdated;
+    if (product.updatedBy.length > 0) {
+      listUserUpdated = await Promise.all(
+        product.updatedBy.map(async (ele) => {
+          const infoUser = await Account.findOne({
+            _id: ele.account_id,
+          })
+            .select("id fullName")
+            .lean();
+          ele["infoUser"] = infoUser;
+          return ele;
+        })
+      );
+    }
     res.render(`${systemConfig.prefixAdmin}/page/products/detail`, {
       pageTitle: "Chi tiết sản phẩm",
       product: product,
+      userCreated,
+      listUserUpdated,
     });
   } catch (error) {
+    console.log(error);
     res.redirect(`/${systemConfig.prefixAdmin}/products`);
   }
 };
