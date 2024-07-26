@@ -37,11 +37,17 @@ block main
                     class="btn btn-secondary btn-sm"
                     href=`/${prefixAdmin}/orders/detail/${item.id}`
                   ) Chi tiết
-                  
+                  button(
+                    class="btn btn-warning btn-sm ml-1"
+                    path=`/${prefixAdmin}/orders`
+                    data-id=item.id
+                    btn-done-deal
+                  ) Done đơn này
                   button(
                     class="btn btn-danger btn-sm ml-1"
                     button-delete
                     data-id=item.id
+                    
                   ) Hủy đơn này
           else
             tr

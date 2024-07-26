@@ -7,16 +7,17 @@ const orderSchema = new mongoose.Schema(
     userInfo: {
       fullName: String,
       phone: String,
-      address: String
+      address: String,
     },
     products: [
       {
         product_id: String,
         price: Number,
         discountPercentage: Number,
-        quantity: Number
-      }
-    ]
+        quantity: Number,
+      },
+    ],
+    status: String,
   },
   { timestamps: true }
 );

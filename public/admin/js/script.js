@@ -277,3 +277,15 @@ if (sort) {
   }
 }
 // End Sort
+const btnDoneDeal = document.querySelector("[btn-done-deal]");
+if (btnDoneDeal) {
+  btnDoneDeal.addEventListener("click", () => {
+    const confirmDone = confirm("Đơn hàng này đã hoàn thành ?");
+
+    if (confirmDone) {
+      const id = btnDoneDeal.getAttribute("data-id");
+      const path = btnDoneDeal.getAttribute("path");
+      window.location.href = path + `/received/${id}`;
+    }
+  });
+}
