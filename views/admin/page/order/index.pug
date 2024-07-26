@@ -1,0 +1,54 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-success(5000)
+
+  h1(class="mb-4") Đơn hàng
+
+  .card.mb-3
+    .card-header Danh sách
+    .card-body
+      
+      table(
+        class="table table-hover table-sm"
+      )
+        thead
+          tr
+            th STT
+            th Họ tên 
+            th Số điện thoại
+            th Địa chỉ
+            th Tổng giá
+            th Hành động
+
+        tbody
+          if(records.length > 0)
+            each item, index in records
+              tr
+                td #{index + 1}
+                td #{item.userInfo.fullName}
+                td #{item.userInfo.phone}
+                td #{item.userInfo.address}
+                td #{item.totalPrice}
+                
+                td
+                  a(
+                    class="btn btn-secondary btn-sm"
+                    href=`/${prefixAdmin}/orders/detail/${item.id}`
+                  ) Chi tiết
+                  
+                  button(
+                    class="btn btn-danger btn-sm ml-1"
+                    button-delete
+                    data-id=item.id
+                  ) Hủy đơn này
+          else
+            tr
+              td(colspan="4" class="text-center") Chưa có đơn hàng nào.
+  form(
+    id="form-delete-item"
+    method="POST"
+    action=""
+    data-path=`/${prefixAdmin}/orders/delete`
+  )
