@@ -156,5 +156,75 @@ module.exports.editPatch = async (req, res) => {
     res.redirect("back");
   }
 };
-//[GET] /admin/products-category/change-status/:id
-module.exports.changeStatus = async (req, res) => {};
+// [GET] /admin/products-category/change-status/:status/:id
+module.exports.changeStatus = async (req, res) => {
+  const id = req.params.id;
+  const status = req.params.status;
+  await ProductCategory.updateOne(
+    {
+      _id: id,
+    },
+    {
+      status: status,
+    }
+  );
+  req.flash("success", `Cập nhật thành công!`);
+  res.redirect("back");
+};
+// [GET] /admin/products-category/delete/:id
+module.exports.deleteItem = async (req, res) => {
+  const id = req.params.id;
+  await ProductCategory.updateOne(
+    {
+      _id: id,
+    },
+    {
+      deleted: true,
+      deletedBy: {
+        account_id: res.locals.user.id,
+        deletedAt: new Date(),
+      },
+    }
+  );
+  req.flash("success", `Xóa thành công!`);
+  res.redirect("back");
+};
+// [GET] /admin/products-category/detail/:id
+module.exports.detail = async (req, res) => {
+  const id = req.params.id;
+  const item = await ProductCategory.findOne({
+    _id: id,
+  });
+  if (!item) {
+    res.redirect("back");
+    return;
+  }
+  var userCreated;
+  if (item.createdBy.account_id) {
+    userCreated = await Account.findOne({
+      _id: item.createdBy.account_id,
+    }).select("id fullName");
+  }
+  var listUserUpdated;
+  if (item.updatedBy.length > 0) {
+    listUserUpdated = await Promise.all(
+      item.updatedBy.map(async (ele) => {
+        const infoUser = await Account.findOne({
+          _id: ele.account_id,
+        })
+          .select("id fullName")
+          .lean();
+        ele["infoUser"] = infoUser;
+        // console.log(ele);
+        return ele;
+      })
+    );
+  }
+
+  res.render("admin/page/products-category/detail", {
+    pageTitle: "Chi tiết danh mục sản phẩm",
+    record: item,
+    userCreated,
+    listUserUpdated,
+  });
+};

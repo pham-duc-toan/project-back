@@ -27,4 +27,7 @@ router.patch(
   uploadCloud.upload,
   controller.editPatch
 );
+router.get("/delete/:id", controller.deleteItem);
+router.get("/change-status/:status/:id", controller.changeStatus);
+router.get("/detail/:id", controller.detail);
 module.exports = router;
