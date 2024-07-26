@@ -201,3 +201,22 @@ module.exports.info = async (req, res) => {
     pageTitle: "Thông tin tài khoản",
   });
 };
+// [GET] /user/my-account/edit
+module.exports.editMyAccount = async (req, res) => {
+  res.render("clients/page/user/editMyAccount", {
+    pageTitle: "Thông tin tài khoản",
+  });
+};
+// [PATCH] /user/my-account/edit
+module.exports.editMyAccountPatch = async (req, res) => {
+  if (req.body.password) {
+    req.body.password = md5(req.body.password);
+    req.body.token = generateHelper.generateRandomString(30);
+  } else {
+    delete req.body.password;
+  }
+
+  await User.updateOne({ _id: res.locals.user.id }, req.body);
+
+  res.redirect(`/user/info`);
+};

@@ -40,7 +40,20 @@
   font-weight: 600;
   color: green;
 }
+/* Image Preview */
+.image-preview {
+  width: 150px;
+  height: auto;
+  margin-top: 15px;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 5px;
+}
 
+.image-preview[src=""] {
+  display: none;
+}
+/* End Image Preview */
 .product-item {
   border: 1px solid #ddd;
   border-radius: 8px;

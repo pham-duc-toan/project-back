@@ -1,11 +1,10 @@
 const express = require("express");
-const multer = require("multer");
-const router  = express.Router();
-
-const upload = multer();
+const router = express.Router();
 
 const controller = require("../../controller/admin/my-account.controller");
 
+const multer = require("multer");
+const upload = multer();
 const uploadCloud = require("../../middlewares/admin/uploadCloud.middleware");
 
 router.get("/", controller.index);
