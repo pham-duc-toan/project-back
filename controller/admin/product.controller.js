@@ -47,7 +47,7 @@ module.exports.index = async (req, res) => {
     .sort(sort)
     .limit(objectPagination.limitItems)
     .skip(objectPagination.skip);
-
+  //logs lich su update create
   for (const product of products) {
     const userCreated = await Account.findOne({
       _id: product.createdBy.account_id,
@@ -67,7 +67,7 @@ module.exports.index = async (req, res) => {
       }
     }
   }
-
+  // end logs lich su deleted update create
   if (productsNoPagination.length > 0 && products.length == 0) {
     let stringQuery = "";
 
@@ -192,10 +192,7 @@ module.exports.deleteItem = async (req, res) => {
       deleted: true,
       deletedBy: {
         account_id: res.locals.user.id,
-        deletedBy: {
-          account_id: res.locals.user.id,
-          deletedAt: new Date(),
-        },
+        deletedAt: new Date(),
       },
     }
   );
