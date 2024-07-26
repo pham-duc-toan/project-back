@@ -1,5 +1,5 @@
 const express = require("express");
-const router  = express.Router();
+const router = express.Router();
 
 const controller = require("../../controller/admin/role.controller");
 
@@ -16,4 +16,7 @@ router.get("/permissions", controller.permissions);
 
 router.patch("/permissions", controller.permissionsPatch);
 
+router.get("/detail/:id", controller.detail);
+
+router.delete("/delete/:id", controller.deleteItem);
 module.exports = router;

@@ -1,0 +1,49 @@
+extends ../../layouts/default.pug
+include ../../mixins/moment.pug
+block main
+  h1(class="mb-4") Chi tiết tài khoản
+
+  .container
+    .row.mb-3
+      .col-md-2
+        strong Họ và tên:
+      .col-md-10
+        | #{item.fullName}
+
+    .row.mb-3
+      .col-md-2
+        strong Email:
+      .col-md-10
+        | #{item.email}
+    
+    .row.mb-3
+      .col-md-2
+        strong Số điện thoại:
+      .col-md-10
+        | #{item.phone}
+
+    .row.mb-3
+      .col-md-2
+        strong Quyền
+      .col-md-10
+        a(href=`/admin/roles/detail/${item.role._id}`) #{item.role.title}
+
+    .row.mb-3
+      .col-md-2
+        strong Trạng thái:
+      .col-md-10
+        | #{item.status}
+
+    
+
+    .row.mb-3
+      .col-md-2
+        strong Ngày tạo:
+      .col-md-10
+        +formatDateTime(item.createdAt)
+
+    .row.mb-3
+      .col-md-2
+        strong Ngày cập nhật:
+      .col-md-10
+        +formatDateTime(item.updatedAt)

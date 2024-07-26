@@ -75,3 +75,51 @@ module.exports.editPatch = async (req, res) => {
 
   res.redirect(`/${systemConfig.prefixAdmin}/accounts`);
 };
+// [PATCH] /admin/accounts/change-status/:status/:id
+module.exports.changeStatus = async (req, res) => {
+  const status = req.params.status;
+  const id = req.params.id;
+
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date(),
+  };
+
+  await Account.updateOne(
+    { _id: id },
+    {
+      status: status,
+      $push: { updatedBy: updatedBy },
+    }
+  );
+  req.flash("success", "Cập nhật thay đổi thành công!");
+  res.redirect("back");
+};
+// [DELETE] /admin/accounts/delete/:id
+module.exports.deleteItem = async (req, res) => {
+  const id = req.params.id;
+
+  await Account.deleteOne({ _id: id });
+  req.flash("success", `Đã xóa vĩnh viễn!`);
+  res.redirect("back");
+};
+// [GET] /admin/accounts/detail/:id
+module.exports.detail = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const item = await Account.findOne({
+      deleted: false,
+      _id: id,
+    });
+
+    const role = await Role.findOne({ _id: item.role_id });
+    item.role = role;
+    res.render("admin/page/accounts/detail", {
+      pageTitle: "Chi tiết tài khoản",
+      item: item,
+    });
+  } catch (error) {
+    res.redirect("back");
+    console.log(error);
+  }
+};

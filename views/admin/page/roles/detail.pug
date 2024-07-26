@@ -1,0 +1,130 @@
+extends ../../layouts/default.pug
+include ../../mixins/alert.pug
+
+block main
+  +alert-success(5000)
+  +alert-error(5000)
+
+  h1(class="mb-4") Thông tin Nhóm quyền
+  h3(class="mb-4") #{item.title}
+  table(
+    class="table table-hover table-sm"
+    table-permissions-view=item.permissions
+  )
+    thead
+      tr
+        th Tính năng
+        
+        th(class="text-center") 
+    tbody
+      tr(data-name="id" class="d-none")
+        td
+          
+        td(class="text-center")
+          input(type="text" value=item.id)
+      tr
+        td(colspan="4")
+          b Danh mục sản phẩm
+      tr(data-name="products-category_view")
+        td Xem
+        
+        td(class="text-center")
+          input(type="checkbox" disabled=true)
+      tr(data-name="products-category_create")
+        td Thêm mới
+        
+        td(class="text-center")
+          input(type="checkbox" disabled=true)
+      tr(data-name="products-category_edit")
+        td Chỉnh sửa
+        
+        td(class="text-center")
+          input(type="checkbox" disabled=true)
+      tr(data-name="products-category_delete")
+        td Xóa
+        
+        td(class="text-center")
+          input(type="checkbox" disabled=true)
+      
+      //- Sản phẩm
+      tr
+        td(colspan="4")
+          b Sản phẩm
+      tr(data-name="products_view")
+        td Xem
+        
+        td(class="text-center")
+          input(type="checkbox" disabled=true)
+      tr(data-name="products_create")
+        td Thêm mới
+        
+        td(class="text-center")
+          input(type="checkbox" disabled=true)
+      tr(data-name="products_edit")
+        td Chỉnh sửa
+        
+        td(class="text-center")
+          input(type="checkbox" disabled=true)
+      tr(data-name="products_delete")
+        td Xóa
+        
+        td(class="text-center")
+          input(type="checkbox" disabled=true)
+
+
+      //- Nhóm quyền
+      tr
+        td(colspan="4")
+          b Nhóm quyền
+      tr(data-name="roles_view")
+        td Xem
+        
+        td(class="text-center")
+          input(type="checkbox" disabled=true)
+      tr(data-name="roles_create")
+        td Thêm mới
+      
+        td(class="text-center")
+          input(type="checkbox" disabled=true)
+      tr(data-name="roles_edit")
+        td Chỉnh sửa
+        
+        td(class="text-center")
+          input(type="checkbox" disabled=true)
+      tr(data-name="roles_delete")
+        td Xóa
+        
+        td(class="text-center")
+          input(type="checkbox" disabled=true)
+      tr(data-name="roles_permissions")
+        td Phân quyền
+        
+        td(class="text-center")
+          input(type="checkbox" disabled=true)
+      
+      //- Tài khoản
+      tr
+        td(colspan="4")
+          b Tài khoản
+      tr(data-name="accounts_view")
+        td Xem
+        
+        td(class="text-center")
+          input(type="checkbox" disabled=true)
+      tr(data-name="accounts_create")
+        td Thêm mới
+        
+        td(class="text-center")
+          input(type="checkbox" disabled=true)
+      tr(data-name="accounts_edit")
+        td Chỉnh sửa
+        
+        td(class="text-center")
+          input(type="checkbox" disabled=true)
+      tr(data-name="accounts_delete")
+        td Xóa
+        
+        td(class="text-center")
+          input(type="checkbox" disabled=true)
+  
+  script(src="/admin/js/role.js")

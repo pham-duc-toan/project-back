@@ -5,21 +5,21 @@ const systemConfig = require("../../config/system");
 // [GET] /admin/roles
 module.exports.index = async (req, res) => {
   const records = await Role.find({
-    deleted: false
+    deleted: false,
   });
 
   res.render("admin/page/roles/index", {
     pageTitle: "Danh sách nhóm quyền",
-    records: records
+    records: records,
   });
-}
+};
 
 // [POST] /admin/roles/create
 module.exports.create = async (req, res) => {
   res.render("admin/page/roles/create", {
     pageTitle: "Tạo mới nhóm quyền",
   });
-}
+};
 
 // [GET] /admin/roles/createPost
 module.exports.createPost = async (req, res) => {
@@ -29,7 +29,7 @@ module.exports.createPost = async (req, res) => {
   req.flash("success", "Thêm nhóm quyền thành công");
 
   res.redirect(`/${systemConfig.prefixAdmin}/roles`);
-}
+};
 // [GET] /admin/roles/edit/:id
 module.exports.edit = async (req, res) => {
   try {
@@ -37,17 +37,17 @@ module.exports.edit = async (req, res) => {
 
     const data = await Role.findOne({
       _id: id,
-      deleted: false
+      deleted: false,
     });
 
     res.render("admin/page/roles/edit", {
       pageTitle: "Chỉnh sửa nhóm quyền",
-      data: data
+      data: data,
     });
   } catch (error) {
     res.redirect(`/${systemConfig.prefixAdmin}/roles`);
   }
-}
+};
 
 // [PATCH] /admin/roles/edit/:id
 module.exports.editPatch = async (req, res) => {
@@ -58,18 +58,18 @@ module.exports.editPatch = async (req, res) => {
   req.flash("success", "Cập nhật nhóm quyền thành công");
 
   res.redirect("back");
-}
+};
 // [GET] /admin/roles/permissions
 module.exports.permissions = async (req, res) => {
   const records = await Role.find({
-    deleted: false
+    deleted: false,
   });
 
   res.render("admin/page/roles/permissions", {
     pageTitle: "Phân quyền",
-    records: records
+    records: records,
   });
-}
+};
 
 // [PATCH] /admin/roles/permissions
 module.exports.permissionsPatch = async (req, res) => {
@@ -78,10 +78,10 @@ module.exports.permissionsPatch = async (req, res) => {
   for (const item of permissions) {
     await Role.updateOne(
       {
-        _id: item.id
+        _id: item.id,
       },
       {
-        permissions: item.permissions
+        permissions: item.permissions,
       }
     );
   }
@@ -89,4 +89,24 @@ module.exports.permissionsPatch = async (req, res) => {
   req.flash("success", "Cập nhật phân quyền thành công!");
 
   res.redirect("back");
-}
+};
+// [GET] /admin/roles/detail/:id
+module.exports.detail = async (req, res) => {
+  const item = await Role.findOne({
+    _id: req.params.id,
+    deleted: false,
+  });
+
+  res.render("admin/page/roles/detail", {
+    pageTitle: "Chi tiết nhóm quyền",
+    item: item,
+  });
+};
+// [DELETE] /admin/roles/delete/:id
+module.exports.deleteItem = async (req, res) => {
+  const id = req.params.id;
+
+  await Role.deleteOne({ _id: id });
+  req.flash("success", `Đã xóa vĩnh viễn!`);
+  res.redirect("back");
+};
