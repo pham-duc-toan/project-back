@@ -39,7 +39,7 @@ module.exports.detail = async (req, res) => {
   try {
     const item = await User.findOne({
       _id: req.params.id,
-    });
+    }).select("-password -tokenUser");
     for (const friend of item.listFriend) {
       const friendInfo = await User.findOne({
         _id: friend.friend_id,

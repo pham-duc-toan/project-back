@@ -220,3 +220,24 @@ module.exports.editMyAccountPatch = async (req, res) => {
 
   res.redirect(`/user/info`);
 };
+// [GET] /user/detail/:id
+module.exports.detail = async (req, res) => {
+  try {
+    const item = await User.findOne({
+      _id: req.params.id,
+    }).select("-password -tokenUser");
+    for (const friend of item.listFriend) {
+      const friendInfo = await User.findOne({
+        _id: friend.friend_id,
+      }).select("fullName avatar id");
+      friend.friendInfo = friendInfo;
+    }
+    res.render("clients/page/user/detail", {
+      pageTitle: "Thông tin người dùng",
+      item: item,
+    });
+  } catch (error) {
+    res.redirect("back");
+    console.log(error);
+  }
+};

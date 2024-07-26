@@ -2,17 +2,17 @@ extends ../../layouts/default.pug
 include ../../mixins/moment.pug
 
 block main
-  h3(class="mb-4") Chi tiết tài khoản khách hàng
+  
 
   .container
+    h3(class="mb-4") Thông tin người dùng
     
     .row.mb-3
       .col-md-12.text-center
-        img(
-          src=(item.avatar ?item.avatar : "/clients/images/avt-user.png" ), alt="Avatar", class="img-thumbnail rounded-circle mb-3", style="width: 150px; height: 150px; object-fit: cover;"
-          )
+        img(src=(item.avatar ?item.avatar : "/clients/images/avt-user.png" ), alt="Avatar", class="img-thumbnail rounded-circle mb-3", style="width: 150px; height: 150px; object-fit: cover;")
         .mt-2
           strong Ảnh đại diện
+
     .row.mb-3
       .col-md-2
         strong Họ và tên:
@@ -31,24 +31,11 @@ block main
           strong Số điện thoại:
         .col-md-10
           | #{item.phone}
-    
-    .row.mb-3
-      .col-md-2
-        strong Trạng thái:
-      .col-md-10
-        | #{item.status}
-    
     .row.mb-3
       .col-md-2
         strong Ngày tạo:
       .col-md-10
         +formatDateTime(item.createdAt)
-
-    .row.mb-3
-      .col-md-2
-        strong Ngày cập nhật:
-      .col-md-10
-        +formatDateTime(item.updatedAt)
     
     if item.listFriend && item.listFriend.length > 0
       .row.mb-3
@@ -67,4 +54,4 @@ block main
                     
                   .card-body.text-center
                     h5.card-title
-                      a(href=`/${prefixAdmin}/users/detail/${friend.friendInfo.id}`) #{friend.friendInfo.fullName}
+                      a(href=`/user/detail/${friend.friendInfo.id}`) #{friend.friendInfo.fullName}
