@@ -4,25 +4,30 @@ const productsHelper = require("../../helpers/products");
 
 // [GET] /search/
 module.exports.index = async (req, res) => {
-  const keyword = req.query.keyword;
+  try {
+    const keyword = req.query.keyword;
 
-  let newProducts = [];
+    let newProducts = [];
 
-  if(keyword) {
-    const keywordRegex = new RegExp(keyword, "i");
+    if (keyword) {
+      const keywordRegex = new RegExp(keyword, "i");
 
-    const products = await Product.find({
-      title: keywordRegex,
-      status: "active",
-      deleted: false
+      const products = await Product.find({
+        title: keywordRegex,
+        status: "active",
+        deleted: false,
+      });
+
+      newProducts = productsHelper.priceNewProducts(products);
+    }
+
+    res.render("clients/page/search/index", {
+      pageTitle: "Kết quả tìm kiếm",
+      keyword: keyword,
+      products: newProducts,
     });
-
-    newProducts = productsHelper.priceNewProducts(products);
+  } catch (error) {
+    console.log(error);
+    res.redirect("back");
   }
-
-  res.render("clients/page/search/index", {
-    pageTitle: "Kết quả tìm kiếm",
-    keyword: keyword,
-    products: newProducts
-  });
 };

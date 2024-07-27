@@ -5,32 +5,42 @@ const chatSocket = require("../../socket/client/chat.socket");
 const generation = require("../../helpers/generate");
 // [GET] /chat/inroom/:room_id
 module.exports.index = async (req, res) => {
-  const room_chat = req.params.room_id;
-  chatSocket(res, room_chat);
-  const chats = await Chat.find({
-    deleted: false,
-    room_chat_id: room_chat,
-  });
-  res.render("clients/page/chat/index", {
-    pageTitle: "Chat",
-    chats: chats,
-  });
+  try {
+    const room_chat = req.params.room_id;
+    chatSocket(res, room_chat);
+    const chats = await Chat.find({
+      deleted: false,
+      room_chat_id: room_chat,
+    });
+    res.render("clients/page/chat/index", {
+      pageTitle: "Chat",
+      chats: chats,
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect("back");
+  }
 };
 // [GET] /chat/rooms-chat
 module.exports.roomChat = async (req, res) => {
-  const myUser = res.locals.user;
-  var roomsChat = [];
-  for (const id of myUser.listRoomChat) {
-    const roomInfo = await Room.findOne({
-      room_chat_id: id,
-    }).select("title id avatar room_chat_id");
-    roomsChat.push(roomInfo);
-  }
+  try {
+    const myUser = res.locals.user;
+    var roomsChat = [];
+    for (const id of myUser.listRoomChat) {
+      const roomInfo = await Room.findOne({
+        room_chat_id: id,
+      }).select("title id avatar room_chat_id");
+      roomsChat.push(roomInfo);
+    }
 
-  res.render("clients/page/chat/rooms-chat", {
-    pageTitle: "Danh sách phòng chat",
-    roomsChat,
-  });
+    res.render("clients/page/chat/rooms-chat", {
+      pageTitle: "Danh sách phòng chat",
+      roomsChat,
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect("back");
+  }
 };
 // [GET] /chat/rooms-chat/create
 module.exports.create = async (req, res) => {

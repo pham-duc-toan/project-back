@@ -9,85 +9,90 @@ const systemConfig = require("../../config/system");
 
 // [GET] /admin/products
 module.exports.index = async (req, res) => {
-  const filterStatus = filterStatusHelper(req.query);
-  let objectSearch = searchHelper(req.query);
-  let find = {
-    deleted: false,
-  };
-  if (req.query.status) {
-    find.status = req.query.status;
-  }
-  if (objectSearch.regex) {
-    find.title = objectSearch.regex;
-  }
-  // Pagination
-  let initPagination = {
-    currentPage: 1,
-    limitItems: 4,
-  };
-  const countProducts = await Product.count(find);
-  const objectPagination = paginationHelper(
-    initPagination,
-    req.query,
-    countProducts
-  );
-  // End Pagination
-  // Sort
-  let sort = {};
-
-  if (req.query.sortKey && req.query.sortValue) {
-    sort[req.query.sortKey] = req.query.sortValue;
-  } else {
-    sort.position = "desc";
-  }
-  // End Sort
-  const productsNoPagination = await Product.find(find);
-
-  const products = await Product.find(find)
-    .sort(sort)
-    .limit(objectPagination.limitItems)
-    .skip(objectPagination.skip);
-  //logs lich su update create
-  for (const product of products) {
-    const userCreated = await Account.findOne({
-      _id: product.createdBy.account_id,
-    });
-
-    if (userCreated) {
-      product.createdBy.accountFullName = userCreated.fullName;
+  try {
+    const filterStatus = filterStatusHelper(req.query);
+    let objectSearch = searchHelper(req.query);
+    let find = {
+      deleted: false,
+    };
+    if (req.query.status) {
+      find.status = req.query.status;
     }
-    const userUpdatedId = product.updatedBy.slice(-1)[0];
-    if (userUpdatedId) {
-      const userUpdated = await Account.findOne({
-        _id: userUpdatedId.account_id,
+    if (objectSearch.regex) {
+      find.title = objectSearch.regex;
+    }
+    // Pagination
+    let initPagination = {
+      currentPage: 1,
+      limitItems: 4,
+    };
+    const countProducts = await Product.count(find);
+    const objectPagination = paginationHelper(
+      initPagination,
+      req.query,
+      countProducts
+    );
+    // End Pagination
+    // Sort
+    let sort = {};
+
+    if (req.query.sortKey && req.query.sortValue) {
+      sort[req.query.sortKey] = req.query.sortValue;
+    } else {
+      sort.position = "desc";
+    }
+    // End Sort
+    const productsNoPagination = await Product.find(find);
+
+    const products = await Product.find(find)
+      .sort(sort)
+      .limit(objectPagination.limitItems)
+      .skip(objectPagination.skip);
+    //logs lich su update create
+    for (const product of products) {
+      const userCreated = await Account.findOne({
+        _id: product.createdBy.account_id,
       });
 
-      if (userUpdated) {
-        userUpdatedId.accountFullName = userUpdated.fullName;
+      if (userCreated) {
+        product.createdBy.accountFullName = userCreated.fullName;
+      }
+      const userUpdatedId = product.updatedBy.slice(-1)[0];
+      if (userUpdatedId) {
+        const userUpdated = await Account.findOne({
+          _id: userUpdatedId.account_id,
+        });
+
+        if (userUpdated) {
+          userUpdatedId.accountFullName = userUpdated.fullName;
+        }
       }
     }
-  }
-  // end logs lich su deleted update create
-  if (productsNoPagination.length > 0 && products.length == 0) {
-    let stringQuery = "";
+    // end logs lich su deleted update create
+    if (productsNoPagination.length > 0 && products.length == 0) {
+      let stringQuery = "";
 
-    for (const key in req.query) {
-      if (key != "page") {
-        stringQuery += `&${key}=${req.query[key]}`;
+      for (const key in req.query) {
+        if (key != "page") {
+          stringQuery += `&${key}=${req.query[key]}`;
+        }
       }
+
+      const href = `${req.baseUrl}?page=1${stringQuery}`;
+
+      res.redirect(href);
+    } else {
+      res.render(`admin/page/products/index`, {
+        pageTitle: "Danh sách sản phẩm",
+        products: products,
+        filterStatus: filterStatus,
+        keyword: objectSearch.keyword,
+        pagination: objectPagination,
+      });
     }
-
-    const href = `${req.baseUrl}?page=1${stringQuery}`;
-
-    res.redirect(href);
-  } else {
-    res.render(`admin/page/products/index`, {
-      pageTitle: "Danh sách sản phẩm",
-      products: products,
-      filterStatus: filterStatus,
-      keyword: objectSearch.keyword,
-      pagination: objectPagination,
-    });
+  } catch (error) {
+    console.log(error);
+    res.redirect("back");
   }
 };
 //[GET] /admin/products/position/swap/:id
@@ -124,119 +129,144 @@ module.exports.swapPosition = async (req, res) => {
 };
 // [PATCH] /admin/products/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
-  const status = req.params.status;
-  const id = req.params.id;
+  try {
+    const status = req.params.status;
+    const id = req.params.id;
 
-  const updatedBy = {
-    account_id: res.locals.user.id,
-    updatedAt: new Date(),
-  };
+    const updatedBy = {
+      account_id: res.locals.user.id,
+      updatedAt: new Date(),
+    };
 
-  await Product.updateOne(
-    { _id: id },
-    {
-      status: status,
-      $push: { updatedBy: updatedBy },
-    }
-  );
-  req.flash("success", "Cập nhật thay đổi thành công!");
-  res.redirect("back");
+    await Product.updateOne(
+      { _id: id },
+      {
+        status: status,
+        $push: { updatedBy: updatedBy },
+      }
+    );
+    req.flash("success", "Cập nhật thay đổi thành công!");
+    res.redirect("back");
+  } catch (error) {
+    console.log(error);
+    res.redirect("back");
+  }
 };
 // [PATCH] /admin/products/change-multi
 
 module.exports.changeMulti = async (req, res) => {
-  const type = req.body.type;
-  const ids = req.body.ids.split(", ");
-  const updatedBy = {
-    account_id: res.locals.user.id,
-    updatedAt: new Date(),
-  };
-  switch (type) {
-    case "active":
-    case "inactive":
-      await Product.updateMany(
-        { _id: { $in: ids } },
-        {
-          status: type,
-          $push: { updatedBy: updatedBy },
-        }
-      );
-      req.flash("success", "Cập nhật thay đổi thành công!");
-      break;
-    case "delete-all":
-      await Product.updateMany(
-        { _id: { $in: ids } },
-        {
-          deleted: true,
-          deletedBy: {
-            account_id: res.locals.user.id,
-            deletedAt: new Date(),
-          },
-        }
-      );
-      req.flash("success", `Xóa thành công!`);
-      break;
-    default:
-      break;
+  try {
+    const type = req.body.type;
+    const ids = req.body.ids.split(", ");
+    const updatedBy = {
+      account_id: res.locals.user.id,
+      updatedAt: new Date(),
+    };
+    switch (type) {
+      case "active":
+      case "inactive":
+        await Product.updateMany(
+          { _id: { $in: ids } },
+          {
+            status: type,
+            $push: { updatedBy: updatedBy },
+          }
+        );
+        req.flash("success", "Cập nhật thay đổi thành công!");
+        break;
+      case "delete-all":
+        await Product.updateMany(
+          { _id: { $in: ids } },
+          {
+            deleted: true,
+            deletedBy: {
+              account_id: res.locals.user.id,
+              deletedAt: new Date(),
+            },
+          }
+        );
+        req.flash("success", `Xóa thành công!`);
+        break;
+      default:
+        break;
+    }
+    res.redirect("back");
+  } catch (error) {
+    console.log(error);
+    res.redirect("back");
   }
-  res.redirect("back");
 };
 
 // [DELETE] /admin/products/delete/:id
 module.exports.deleteItem = async (req, res) => {
-  const id = req.params.id;
+  try {
+    const id = req.params.id;
 
-  await Product.updateOne(
-    { _id: id },
-    {
-      deleted: true,
-      deletedBy: {
-        account_id: res.locals.user.id,
-        deletedAt: new Date(),
-      },
-    }
-  );
-  req.flash("success", `Xóa thành công!`);
-  res.redirect("back");
+    await Product.updateOne(
+      { _id: id },
+      {
+        deleted: true,
+        deletedBy: {
+          account_id: res.locals.user.id,
+          deletedAt: new Date(),
+        },
+      }
+    );
+    req.flash("success", `Xóa thành công!`);
+    res.redirect("back");
+  } catch (error) {
+    console.log(error);
+    res.redirect("back");
+  }
 };
 // [GET] /admin/products/create
 module.exports.create = async (req, res) => {
-  let find = {
-    deleted: false,
-  };
+  try {
+    let find = {
+      deleted: false,
+    };
 
-  const records = await ProductCategory.find(find);
+    const records = await ProductCategory.find(find);
 
-  const newRecords = createTree(records);
+    const newRecords = createTree(records);
 
-  res.render(`${systemConfig.prefixAdmin}/page/products/create`, {
-    pageTitle: "Tạo mới sản phẩm",
-    records: newRecords,
-  });
+    res.render(`${systemConfig.prefixAdmin}/page/products/create`, {
+      pageTitle: "Tạo mới sản phẩm",
+      records: newRecords,
+    });
+  } catch (error) {
+    console.log(error);
+    res.redirect("back");
+  }
 };
 
 // [POST] /admin/products/create
 module.exports.createPost = async (req, res) => {
-  req.body.price = parseInt(req.body.price);
-  req.body.discountPercentage = parseInt(req.body.discountPercentage);
+  try {
+    req.body.price = parseInt(req.body.price);
+    req.body.discountPercentage = parseInt(req.body.discountPercentage);
 
-  req.body.stock = parseInt(req.body.stock);
+    req.body.stock = parseInt(req.body.stock);
 
-  const allProduct = await Product.find();
-  var position = 0;
-  for (const product of allProduct) {
-    position = Math.max(product.position, position);
+    const allProduct = await Product.find();
+    var position = 0;
+    for (const product of allProduct) {
+      position = Math.max(product.position, position);
+    }
+    req.body.position = position + 1;
+
+    req.body.createdBy = {
+      account_id: res.locals.user.id,
+    };
+
+    const product = new Product(req.body);
+    await product.save();
+    req.flash("success", `Tạo thành công`);
+    res.redirect(`/${systemConfig.prefixAdmin}/products`);
+  } catch (error) {
+    console.log(error);
+    res.redirect("back");
   }
-  req.body.position = position + 1;
-
-  req.body.createdBy = {
-    account_id: res.locals.user.id,
-  };
-
-  const product = new Product(req.body);
-  await product.save();
-  req.flash("success", `Tạo thành công`);
-  res.redirect(`/${systemConfig.prefixAdmin}/products`);
 };
 // [GET] /admin/products/edit/:id
 module.exports.edit = async (req, res) => {
