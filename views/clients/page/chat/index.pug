@@ -14,7 +14,8 @@ block main
             each chat in chats 
               div(userId_chat=chat.user_id class=(chat.user_id == user.id ? 'inner-outgoing':'inner-incoming'))
                 if(chat.user_id != user.id)
-                  .inner-name #{chat.fullNameUser}
+                  .inner-name
+                    a(href=`/user/detail/${chat.user_id}`) #{chat.fullNameUser}
                 if(chat.content)
                   .inner-content 
                     | #{chat.content}
